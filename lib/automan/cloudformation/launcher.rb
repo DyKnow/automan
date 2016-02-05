@@ -21,7 +21,7 @@ module Automan::Cloudformation
       super
       @wait = Wait.new({
         delay: 120,
-        attempts: 15, # 15 x 2m == 30m
+        attempts: 25, # 25 x 2m == 50m
         debug: true,
         rescuer:  WaitRescuer.new(),
         logger:   @logger
