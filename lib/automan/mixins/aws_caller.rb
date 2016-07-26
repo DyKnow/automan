@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'aws-sdk-v1'
 
 module Automan
   module Mixins
@@ -8,7 +9,8 @@ module Automan
         ENV['AWS_ACCOUNT_ID']
       end
 
-      def configure_aws(options={})
+     def configure_aws(options={})
+        puts "HI EVERYBODY"
         if ENV['AWS_ROLE']
           sts = AWS::STS.new
 
@@ -22,7 +24,9 @@ module Automan
         end
 
         AWS.config(options)
+        Aws.config.update options #v2
       end
+    
 
       attr_writer :eb
       def eb
@@ -30,6 +34,14 @@ module Automan
           @eb = AWS::ElasticBeanstalk.new.client
         end
         @eb
+      end
+        
+     attr_writer :eb2
+     def eb2
+        if @eb2.nil?
+          @eb2 = Aws::ElasticBeanstalk::Client.new
+        end
+        @eb2
       end
 
       attr_writer :s3
