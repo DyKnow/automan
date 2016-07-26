@@ -10,7 +10,7 @@ module Automan
       end
 
      def configure_aws(options={})
-        puts "HI EVERYBODY"
+        
         if ENV['AWS_ROLE']
           sts = AWS::STS.new
 
