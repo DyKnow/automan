@@ -9,7 +9,7 @@ module Automan
         ENV['AWS_ACCOUNT_ID']
       end
 
-     def configure_aws(options={})
+      def configure_aws(options={})
         if ENV['AWS_ROLE']
           sts = AWS::STS.new
 
