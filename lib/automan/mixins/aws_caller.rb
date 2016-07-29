@@ -23,7 +23,7 @@ module Automan
         end
 
         AWS.config(options)
-        Aws.config.update options #v2
+        #Aws.config.update options #v2
       end
     
 
