@@ -125,10 +125,11 @@ module Automan::Cloudformation
       }
       opts[:capabilities] = ['CAPABILITY_IAM'] if enable_iam
       opts[:disable_rollback] = disable_rollback
-
       logger.info "launching stack #{name}"
-      cfn.stacks.create name, template_handle(template), opts
-
+       tmplHandleRet = template_handle(template)
+      cfn.stacks.create name, tmplHandleRet, opts
+     
+        
       if wait_for_completion
         logger.info "waiting for stack #{name} to launch"
         wait_until { stack_launch_complete? }
@@ -179,7 +180,7 @@ module Automan::Cloudformation
       log_options
 
       validate_parameters
-
+      
       if stack_exists?
 
         logger.info "stack #{name} exists"
@@ -187,6 +188,7 @@ module Automan::Cloudformation
           update
         else
           raise StackExistsError, "stack #{name} already exists"
+            
         end
 
       else
