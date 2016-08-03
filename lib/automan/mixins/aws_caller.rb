@@ -1,4 +1,5 @@
 require 'aws-sdk'
+require 'aws-sdk-v1'
 
 module Automan
   module Mixins
@@ -30,6 +31,14 @@ module Automan
           @eb = AWS::ElasticBeanstalk.new.client
         end
         @eb
+      end
+        
+     attr_writer :eb2
+     def eb2
+        if @eb2.nil?
+          @eb2 = Aws::ElasticBeanstalk::Client.new
+        end
+        @eb2
       end
 
       attr_writer :s3

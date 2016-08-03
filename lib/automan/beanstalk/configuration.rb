@@ -17,8 +17,8 @@ module Automan::Beanstalk
       }
 
       begin
-        response = eb.describe_configuration_settings opts
-      rescue AWS::ElasticBeanstalk::Errors::InvalidParameterValue => e
+        response = eb2.describe_configuration_settings opts
+      rescue Aws::ElasticBeanstalk::Errors::InvalidParameterValue => e
         if e.message.start_with? "No Configuration Template named"
           return false
         end
@@ -43,7 +43,7 @@ module Automan::Beanstalk
         template_name:    name
       }
 
-      response = eb.delete_configuration_template opts
+      response = eb2.delete_configuration_template opts
 
       unless response.successful?
         raise RequestFailedError, "delete_configuration_template failed: #{response.error}"
@@ -94,7 +94,7 @@ module Automan::Beanstalk
         option_settings:     configuration_options
       }
 
-      response = eb.create_configuration_template opts
+      response = eb2.create_configuration_template opts
 
       unless response.successful?
         raise RequestFailedError, "create_configuration_template failed: #{response.error}"

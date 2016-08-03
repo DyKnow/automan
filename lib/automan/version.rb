@@ -1,3 +1,3 @@
 module Automan
-  VERSION = "2.4.1"
+  VERSION = "2.6.1"
 end
