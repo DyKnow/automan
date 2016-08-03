@@ -186,6 +186,7 @@ module Automan::RDS
       unless response.successful?
         raise RequestFailedError "list_tags_for_resource failed: #{response.error}"
       end
+
       result = {}
       response.data[:tag_list].each do |t|
         result[ t[:key] ] = t[:value]
@@ -260,7 +261,7 @@ module Automan::RDS
     def latest
       log_options
       logger.info "Finding most recent snapshot for #{environment}"
-      
+
       tags = { 'Environment' => environment }
       s = snapshots_with_tags(tags).sort_by {|s| s.created_at}.last
 
