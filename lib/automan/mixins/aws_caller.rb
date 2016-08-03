@@ -25,7 +25,6 @@ module Automan
         AWS.config(options)
         #Aws.config.update options #v2
       end
-    
 
       attr_writer :eb
       def eb

@@ -185,8 +185,7 @@ module Automan::Cloudformation
         if enable_update == true
           update
         else
-          raise StackExistsError, "stack #{name} already exists"
-            
+          raise StackExistsError, "stack #{name} already exists"           
         end
 
       else
