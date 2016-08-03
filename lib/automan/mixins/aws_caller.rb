@@ -23,7 +23,6 @@ module Automan
         end
 
         AWS.config(options)
-        #Aws.config.update options #v2
       end
 
       attr_writer :eb
@@ -32,7 +31,7 @@ module Automan
           @eb = AWS::ElasticBeanstalk.new.client
         end
         @eb
-      end
+      end  
         
      attr_writer :eb2
      def eb2
