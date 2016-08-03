@@ -126,8 +126,7 @@ module Automan::Cloudformation
       opts[:capabilities] = ['CAPABILITY_IAM'] if enable_iam
       opts[:disable_rollback] = disable_rollback
       logger.info "launching stack #{name}"
-       tmplHandleRet = template_handle(template)
-      cfn.stacks.create name, tmplHandleRet, opts
+      cfn.stacks.create name, template_handle(template), opts
      
         
       if wait_for_completion
