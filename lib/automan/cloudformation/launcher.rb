@@ -127,8 +127,7 @@ module Automan::Cloudformation
       opts[:disable_rollback] = disable_rollback
       logger.info "launching stack #{name}"
       cfn.stacks.create name, template_handle(template), opts
-     
-        
+         
       if wait_for_completion
         logger.info "waiting for stack #{name} to launch"
         wait_until { stack_launch_complete? }
@@ -179,7 +178,7 @@ module Automan::Cloudformation
       log_options
 
       validate_parameters
-      
+
       if stack_exists?
 
         logger.info "stack #{name} exists"
