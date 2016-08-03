@@ -31,7 +31,7 @@ module Automan
           @eb = AWS::ElasticBeanstalk.new.client
         end
         @eb
-      end  
+      end
         
      attr_writer :eb2
      def eb2
