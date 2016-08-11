@@ -57,7 +57,7 @@ module Automan::Cloudformation
     end
 
     def parse_template_parameters
-      cfn.validate_template( template_handle(template) )
+      cfn2.validate_template( template_handle(template) )
     end
 
     def validate_parameters
@@ -90,11 +90,11 @@ module Automan::Cloudformation
     end
 
     def stack_exists?
-      cfn.stacks[name].exists?
+      cfn2.stacks[name].exists?
     end
 
     def stack_status
-      cfn.stacks[name].status
+      cfn2.stacks[name].status
     end
 
     def stack_launch_complete?
@@ -127,7 +127,7 @@ module Automan::Cloudformation
       opts[:disable_rollback] = disable_rollback
 
       logger.info "launching stack #{name}"
-      cfn.stacks.create name, template_handle(template), opts
+      cfn2.stacks.create name, template_handle(template), opts
 
       if wait_for_completion
         logger.info "waiting for stack #{name} to launch"
@@ -136,7 +136,7 @@ module Automan::Cloudformation
     end
 
     def update_stack(name, opts)
-      cfn.stacks[name].update( opts )
+      cfn2.stacks[name].update( opts )
     end
 
     def update
@@ -154,7 +154,7 @@ module Automan::Cloudformation
       # it raises a ValidationError
       begin
         update_stack(name, opts)
-      rescue AWS::CloudFormation::Errors::ValidationError => e
+      rescue Aws::CloudFormation::Errors::ValidationError => e
         if e.message != "No updates are to be performed."
           raise e
         else

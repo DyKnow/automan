@@ -101,6 +101,14 @@ module Automan
         @cfn
       end
 
+      attr_writer :cfn2
+      def cfn2
+        if @cfn2.nil?
+          @cfn2 = Aws::CloudFormation::Client.new
+        end
+        @cfn2
+      end
+        
       attr_writer :as
       def as
         if @as.nil?
