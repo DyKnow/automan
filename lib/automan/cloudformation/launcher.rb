@@ -57,15 +57,18 @@ module Automan::Cloudformation
     end
 
     def parse_template_parameters
+        puts "Entered into Parse_parametrs"
       cfn2.validate_template( template_handle(template) )
     end
 
     def validate_parameters
+      puts "Entered into validate parameters"
       if parameters.nil?
         raise MissingParametersError, "there are no parameters!"
       end
 
       template_params_hash = parse_template_parameters
+        puts "Hello"
 
       if template_params_hash.has_key? :code
         mesg = template_params_hash[:message]
