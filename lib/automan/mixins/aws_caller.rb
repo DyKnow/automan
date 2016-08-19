@@ -108,7 +108,15 @@ module Automan
         end
         @cfn2
       end
-        
+       
+      attr_writer :cfn2resource
+      def cfn2resource
+        if @cfn2resource.nil?
+          @cfn2resource = Aws::CloudFormation::Resource.new
+        end
+        @cfn2resource
+      end
+     
       attr_writer :as
       def as
         if @as.nil?
