@@ -50,31 +50,34 @@ module Automan::Cloudformation
     def template_handle(template_path)
       if looks_like_s3_path? template_path
         bucket, key = parse_s3_path template_path
-        return s3.buckets[bucket].objects[key]
+        return s3.buckets[bucket].objects[key].read
       else
         return File.read(template_path)
       end
     end
 
     def parse_template_parameters
-      cfn.validate_template( template_handle(template) )
+        template_val = { template_body: template_handle(template) }
+      cfn2.validate_template( template_val)
     end
 
     def validate_parameters
+      puts "Entered into validate parameters"
       if parameters.nil?
         raise MissingParametersError, "there are no parameters!"
       end
 
       template_params_hash = parse_template_parameters
+        puts "Hello"
 
-      if template_params_hash.has_key? :code
-        mesg = template_params_hash[:message]
-        raise BadTemplateError, "template did not validate: #{mesg}"
-      end
+#      if template_params_hash.has_key? :code
+#        mesg = template_params_hash[:message]
+#        raise BadTemplateError, "template did not validate: #{mesg}"
+#      end
 
       # make sure any template parameters w/o a default are specified
-      template_params = template_params_hash[:parameters]
-      required_params = template_params.select { |x| !x.has_key? :default_value}
+      template_params = template_params_hash.parameters
+      required_params = template_params #.select { |x| !x.has_key? :default_value}
       required_params.each do |rp|
         unless parameters.has_key? rp[:parameter_key]
           raise MissingParametersError, "required parameter #{rp[:parameter_key]} was not specified"
@@ -82,19 +85,24 @@ module Automan::Cloudformation
       end
 
       # add iam capabilities if needed
-      if template_params_hash.has_key?(:capabilities) &&
-        template_params_hash[:capabilities].include?('CAPABILITY_IAM')
+      if template_params_hash.capabilities.include?('CAPABILITY_IAM')
         self.enable_iam = true
       end
 
     end
 
     def stack_exists?
-      cfn.stacks[name].exists?
+      #cfn2.stacks[name]_exists?
+        begin
+        cfn2resource.stack(name).stack_id
+        true
+      rescue Aws::CloudFormation::Errors::ValidationError
+        false
+      end
     end
 
     def stack_status
-      cfn.stacks[name].status
+      cfn2resource.stacks[name].status
     end
 
     def stack_launch_complete?
@@ -118,17 +126,23 @@ module Automan::Cloudformation
         false
       end
     end
+    
+    def convert_parameters(parameters)
+      parameters.map { |k,v| { parameter_key: k, parameter_value: v } }
+    end
 
-    def launch
-      opts = {
-        parameters: parameters
-      }
-      opts[:capabilities] = ['CAPABILITY_IAM'] if enable_iam
-      opts[:disable_rollback] = disable_rollback
-
-      logger.info "launching stack #{name}"
-      cfn.stacks.create name, template_handle(template), opts
-
+    def launch()
+        
+    logger.info "launching stack #{name}"
+      
+       cfn2resource.create_stack({
+        stack_name:        name,
+        parameters:        convert_parameters(parameters),
+        disable_rollback:  false,
+        capabilities:     ["CAPABILITY_IAM"],
+        template_body: template_handle(template)
+        })
+#       cfn2resource.stacks.new(name, template_val, opts 
       if wait_for_completion
         logger.info "waiting for stack #{name} to launch"
         wait_until { stack_launch_complete? }
@@ -136,7 +150,7 @@ module Automan::Cloudformation
     end
 
     def update_stack(name, opts)
-      cfn.stacks[name].update( opts )
+      cfn2resource.stacks[name].update( opts )
     end
 
     def update
@@ -154,7 +168,7 @@ module Automan::Cloudformation
       # it raises a ValidationError
       begin
         update_stack(name, opts)
-      rescue AWS::CloudFormation::Errors::ValidationError => e
+      rescue Aws::CloudFormation::Errors::ValidationError => e
         if e.message != "No updates are to be performed."
           raise e
         else
